@@ -8,11 +8,12 @@ dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 interface IPayload {
   id: string;
-  role: string;
+  role?: string;
   subRole?: string;
+  aud?: string;
 }
 
-export const generateToken = (id: string, role: string, subRole?: string) => {
+export const generateToken = (id: any, role?: string, subRole?: string) => {
   return new Promise((resolve, reject) => {
     const payload: IPayload = { id, role };
     if (subRole) {
@@ -68,3 +69,35 @@ export const verifyAccessToken = (
     next(new CustomError(err, 500));
   }
 };
+
+export const signRefreshToken = (id: any) => {
+  return new Promise((resolve, reject) => {
+    const payload = {}
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+    const options = {
+      expiresIn: "1y",
+      issuer: "ehr.com",
+      audience: id,
+    };
+    JwT.sign(payload, secret!, options, (err, token) => {
+      if(err) reject(new CustomError("Error while sign refresh token", 400))
+      resolve(token)
+    });
+  });
+};
+
+
+export const verifyRefreshToken = (refreshToken: string) => {
+  return new Promise((resolve, reject) => {
+    JwT.verify(refreshToken, process.env.ACCESS_TOKEN_SECRET!, (err, decodedPayload) => {
+      if(err) reject(new CustomError("Error while verifying refresh token", 400))
+      
+      if(typeof decodedPayload !== 'string' && decodedPayload?.aud) {
+        const userId = decodedPayload.aud;
+        resolve(userId);
+      } else {
+        reject(new CustomError("Invalid refresh token payload", 400));
+      }
+    })
+  })
+}

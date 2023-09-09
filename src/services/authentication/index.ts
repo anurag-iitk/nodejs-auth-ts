@@ -8,7 +8,7 @@ import authRouter from "./routes/auth";
 
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-const PORT = Number(process.env.AUTH_PORT) || 4000;
+const PORT = 5000;
 const app = express();
 
 app.get("/", (req: Request, res: Response) => {
