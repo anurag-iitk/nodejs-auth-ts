@@ -23,7 +23,7 @@ export const signUp = async (
 
     const userCount = await collections.users!.countDocuments();
     const userId = `user${userCount + 1}`;
-    const hashPassword = await bcrypt.genSalt(10, password);
+    const hashPassword = await bcrypt.hash(password, 10);
 
     const newUser = {
       id: userId,
@@ -58,7 +58,7 @@ export const logIn = async (
     const user = await collections.users!.findOne({ email });
     if (!user) throw new CustomError("No user found with this email", 400);
 
-    const isPasswordCorrect = await user.comparePassword(password);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect)
       throw new CustomError("Incorrect password and username", 401);
     
