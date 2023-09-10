@@ -4,6 +4,6 @@
 *node_modules/
 
 # Ignore .env in src folder
-src/.env
+*.env
 
 build/
