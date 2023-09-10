@@ -7,6 +7,15 @@ import {
 import CustomError from "../../../utils/error";
 import { collections } from "../config/db_conn";
 import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 
 export const signUp = async (
@@ -146,6 +155,41 @@ export const updatePassword = async (
     res.status(200).send({ message: "Password updated successfully" });
   } catch (err) {
     next(new CustomError(err || "Password update failed", 500));
+  }
+};
+
+
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+    if (!email) throw new CustomError("Email is required", 400);
+
+    const user = await collections.users!.findOne({ email });
+    if (!user) throw new CustomError("User not found", 400);
+
+    const resetToken = Math.floor(Math.random() * 1000000).toString();
+    await collections.users!.updateOne({ email }, { $set: { resetToken } });
+
+    // Send an email with the reset token
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Password Reset Token",
+      text: `Your password reset token is: ${resetToken}`,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) throw err;
+      res
+        .status(200)
+        .send({ message: "Reset token has been sent to your email." });
+    });
+  } catch (err) {
+    next(new CustomError(err || "Failed to send reset token", 500));
   }
 };
 
