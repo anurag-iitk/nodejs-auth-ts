@@ -1,9 +1,15 @@
 # nodejs-auth-ts
+**Overview**
+Mainly focus to create authentication service via *TypeScript*. The folder structure pattern like to build & run mulitiple services in single application.
 
-{
-  "name": "anurag",
-  "role": "patient",
-  "email": "a@example.com",
-  "dob": new Date('2002-24-06'),
-  "password": "securePassword123"
-}
+## Prerequisites
+* Git clone
+```https://github.com/anurag-iitk/nodejs-auth-ts.git```
+
+* Go to
+```cd src/services/authentication```
+
+* Install dependencies
+```npm install```
+
+## Whoa! authentication service is running
