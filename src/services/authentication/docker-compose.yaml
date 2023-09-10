@@ -4,7 +4,7 @@ services:
   auth-service:
     build: .
     ports:
-      - "6000:6000"
+      - "4000:6000"
     links:
       - mongo
       - redis

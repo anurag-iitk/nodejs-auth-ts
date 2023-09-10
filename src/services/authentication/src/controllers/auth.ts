@@ -8,14 +8,23 @@ import CustomError from "../utils/error";
 import { collections } from "../config/db_conn";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import dotenv from 'dotenv';
+import path from 'path';
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
+dotenv.config({ path: path.resolve(__dirname, "./.env") });
+
+
+let transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+      user: process.env.EMAIL_USER, 
+      pass: process.env.EMAIL_PASSWORD
+  }
+} as nodemailer.TransportOptions);
+
+
 
 export const signUp = async (
   req: Request,

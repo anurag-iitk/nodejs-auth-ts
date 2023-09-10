@@ -6,7 +6,7 @@ import { connectToDatabase } from "./src/config/db_conn";
 import cors from "cors";
 import authRouter from "./src/routes/auth";
 
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
 const PORT = process.env.AUTH_PORT || 6000;
 const app = express();
