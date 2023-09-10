@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../models/user";
 import {
   generateToken,
   signRefreshToken,
-  verifyAccessToken,
   verifyRefreshToken,
 } from "../utils/jwt_helper";
 import CustomError from "../../../utils/error";
 import { collections } from "../config/db_conn";
 import bcrypt from "bcrypt";
+
 
 export const signUp = async (
   req: Request,
@@ -116,3 +115,37 @@ export const logout = async (
     next(new CustomError(error, 400));
   }
 };
+
+export const updatePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, oldPassword, newPassword } = req.body;
+    if (!email || !oldPassword || !newPassword) {
+      throw new CustomError("All fields are required", 400);
+    }
+
+    const user = await collections.users!.findOne({ email });
+    if (!user) throw new CustomError("User not found", 400);
+
+    const isOldPasswordCorrect = await bcrypt.compare(
+      oldPassword,
+      user.password
+    );
+    if (!isOldPasswordCorrect)
+      throw new CustomError("Old password is incorrect", 401);
+
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+    await collections.users!.updateOne(
+      { email },
+      { $set: { password: hashNewPassword } }
+    );
+
+    res.status(200).send({ message: "Password updated successfully" });
+  } catch (err) {
+    next(new CustomError(err || "Password update failed", 500));
+  }
+};
+
