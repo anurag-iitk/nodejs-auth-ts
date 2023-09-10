@@ -17,7 +17,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 export const signUp = async (
   req: Request,
   res: Response,
@@ -158,7 +157,6 @@ export const updatePassword = async (
   }
 };
 
-
 export const forgotPassword = async (
   req: Request,
   res: Response,
@@ -193,3 +191,31 @@ export const forgotPassword = async (
   }
 };
 
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, token, newPassword } = req.body;
+    if (!email || !token || !newPassword) {
+      throw new CustomError("All fields are required", 400);
+    }
+
+    const user = await collections.users!.findOne({ email });
+    if (!user) throw new CustomError("User not found", 400);
+    if (user.resetToken !== token) {
+      throw new CustomError("Invalid reset token", 401);
+    }
+
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+    await collections.users!.updateOne(
+      { email },
+      { $set: { password: hashNewPassword, resetToken: null } }
+    );
+
+    res.status(200).send({ message: "Password reset successfully" });
+  } catch (err) {
+    next(new CustomError(err || "Password reset failed", 500));
+  }
+};
