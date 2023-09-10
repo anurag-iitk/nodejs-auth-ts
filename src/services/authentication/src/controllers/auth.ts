@@ -4,7 +4,7 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "../utils/jwt_helper";
-import CustomError from "../../../utils/error";
+import CustomError from "../utils/error";
 import { collections } from "../config/db_conn";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";

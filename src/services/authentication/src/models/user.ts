@@ -1,7 +1,4 @@
 import mongoose, { Document, Model } from "mongoose";
-import bcrypt from "bcrypt";
-import { NextFunction } from "express";
-import CustomError from "../../../utils/error";
 
 enum UserRole {
   ADMIN = "admin",

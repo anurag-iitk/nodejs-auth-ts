@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import { errorHandler } from "./middleware/errorHandler";
+import { errorHandler } from "./services/authentication/src/middleware/errorHandler";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 

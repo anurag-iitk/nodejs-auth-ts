@@ -1,10 +1,10 @@
 import path from "path";
 import JwT from "jsonwebtoken";
-import CustomError from "../../../utils/error";
+import CustomError from "./error";
 import dotenv from "dotenv";
 import { NextFunction } from "express";
 
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../../../.env") });
 
 interface IPayload {
   id: string;
