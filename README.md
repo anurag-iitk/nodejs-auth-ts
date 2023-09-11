@@ -16,7 +16,7 @@ Required dependencies
 
 * ```npm start```
 
-**via docker**
+### via docker
 
 * ```docker run -p 6000:6000 auth-service```
 
